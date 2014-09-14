@@ -10,8 +10,16 @@ uses
   IdIOHandlerStream, IdIntercept, IdInterceptThrottler, Vcl.ExtCtrls,
   Vcl.ComCtrls;
 
+const
+	STAT_COUNT = 10;
+
 type
 	TVerbosity = (vNormal, vVerbose, vVery);
+  TStatItem = record
+    Sent: Cardinal;
+    Rec: Cardinal;
+  end;
+  TStat = array[0..STAT_COUNT - 1] of TStatItem;
 
   TMainForm = class(TForm)
     mLog: TMemo;
@@ -69,12 +77,15 @@ type
     FVerbosity: TVerbosity;
     FRec, FSent: Cardinal;
     FStartTime: TDateTime;
+    FStat: TStat;
     procedure SetActive(const AActive: boolean);
     procedure AddLog(const AMsg: string);
     procedure ReadSettings;
     procedure WriteSettings;
     procedure UpdateStatusbar;
     procedure ResetStat;
+    procedure AddStat(const ASent, ARec: Cardinal);
+    procedure AvgStat(var AStat: TStatItem);
   public
     { Public-Deklarationen }
   end;
@@ -112,6 +123,42 @@ begin
     	AddLog(Format('Startup Port %d, %d Bit/s', [ipsMain.DefaultPort, FBitsPerSec]))
     else
     	Addlog('Shutdown');
+  end;
+end;
+
+procedure TMainForm.AddStat(const ASent, ARec: Cardinal);
+var
+	i: integer;
+begin
+	for i := 1 to STAT_COUNT - 1 do begin
+    FStat[i - 1].Sent := FStat[i].Sent;
+    FStat[i - 1].Rec := FStat[i].Rec;
+  end;
+  FStat[STAT_COUNT - 1].Sent := ASent;
+  FStat[STAT_COUNT - 1].Rec := ARec;
+end;
+
+procedure TMainForm.AvgStat(var AStat: TStatItem);
+var
+	i: integer;
+  ssum, srec, cnt: Cardinal;
+begin
+	cnt := 0;
+  ssum := 0;
+  srec := 0;
+	for i := 0 to STAT_COUNT - 1 do begin
+		if (FStat[i].Sent <> 0) or (FStat[i].Rec <> 0) then begin
+			Inc(cnt);
+      Inc(ssum, FStat[i].Sent);
+      Inc(srec, FStat[i].Rec);
+    end;
+  end;
+  if (cnt > 0) then begin
+		AStat.Sent := Trunc(ssum / cnt);
+    AStat.Rec := Trunc(srec / cnt);
+  end else begin
+    AStat.Sent := 0;
+    AStat.Rec := 0;
   end;
 end;
 
@@ -189,7 +236,7 @@ var
   act: boolean;
 begin
 	val := IntToStr(FBitsPerSec);
-	if InputQuery('Max Speed', 'Max Speed in Bits per sec. 0 = unlimited.', val) then begin
+	if InputQuery('Max sspeed', 'Max speed in Bits/s. per connection.'#13#10'0 = unlimited.', val) then begin
   	act := ipsMain.Active;
     if act then
 			SetActive(false);
@@ -203,17 +250,22 @@ procedure TMainForm.UpdateStatusbar;
 var
 	td: integer;
   sps, spr: integer;
+  st: TStatItem;
 begin
   td := SecondsBetween(Now, FStartTime);
   if td > 0 then begin
-    sps := Trunc(FSent / td);
-    spr := Trunc(FRec / td);
+    sps := Trunc(FSent / td) * 8;
+    spr := Trunc(FRec / td) * 8;
   end else begin
     sps := 0;
     spr := 0;
   end;
+  AddStat(sps, spr);
+  AvgStat(st);
+  if (td > 10) then
+  	ResetStat;
 
-  sbMain.SimpleText := Format('Sent: %d B/s; Rec: %d B/s', [sps, spr]);
+  sbMain.SimpleText := Format('Sent: %d Bits/s; Rec: %d Bits/s; Total: %d Bits/s', [st.Sent, st.Rec, st.Sent + st.Rec]);
 end;
 
 procedure TMainForm.actVerbNormalExecute(Sender: TObject);

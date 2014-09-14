@@ -203,7 +203,6 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     TabOrder = 0
     WordWrap = False
-    ExplicitHeight = 218
   end
   object sbMain: TStatusBar
     Left = 0
@@ -212,9 +211,6 @@ object MainForm: TMainForm
     Height = 19
     Panels = <>
     SimplePanel = True
-    ExplicitLeft = 432
-    ExplicitTop = 208
-    ExplicitWidth = 0
   end
   object mnuMain: TMainMenu
     Left = 128
