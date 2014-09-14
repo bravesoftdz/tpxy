@@ -12,8 +12,20 @@ Motivation
 ----------
 
 I like [Tox](http://tox.im), but sometimes it takes all my bandwidth, so I thought 
-it would be a good idea to limit the bandwidth for it. I was too lazy to do it the 
-right way, i.e. writing a network driver.
+it would be a good idea to limit the bandwidth for it. Yah, I know with this
+I'm throtteling some elses traffic, but hey, a bad ping isn't an option when playing 
+games! Or I must read something like this:
+
+Ally> Didn't we take heal with us, or where is he?
+Me> Ahm, I'm here.
+Ally> Why did you let me die?
+Me> Uhm, sry, I was about 0.25 sec too late, cause of my bad ping.
+Ally> You have always a bad ping, right?
+Me> No, not always, only when I stream videos or my IM is running.
+Ally> Could you pls stop streaming videos and turn this program off?
+Me> Alright, go ahead.
+
+I was too lazy to do it the right way, i.e. writing a network driver.
 
 Compiling
 ---------
