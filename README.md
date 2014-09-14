@@ -3,6 +3,11 @@ Throttle Proxy
 
 Just a SOCKS4/5 proxy server to limit transfer speed.
 
+Warning
+-------
+
+This is the work of 2 hours, so it may be buggy.
+
 Motivation
 ----------
 
