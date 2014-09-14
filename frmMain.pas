@@ -10,6 +10,8 @@ uses
   IdIOHandlerStream, IdIntercept, IdInterceptThrottler, Vcl.ExtCtrls;
 
 type
+	TVerbosity = (vNormal, vVerbose, vVery);
+
   TMainForm = class(TForm)
     mLog: TMemo;
     mnuMain: TMainMenu;
@@ -30,6 +32,13 @@ type
     actProxyPort: TAction;
     Port1: TMenuItem;
     N1: TMenuItem;
+    actVerbNormal: TAction;
+    actVerbVerbose: TAction;
+    actVerbVery: TAction;
+    Verbosity1: TMenuItem;
+    Normal1: TMenuItem;
+    Verbose1: TMenuItem;
+    Veryverbose1: TMenuItem;
     procedure actFileExitExecute(Sender: TObject);
     procedure actProxyActiveUpdate(Sender: TObject);
     procedure actProxyActiveExecute(Sender: TObject);
@@ -48,9 +57,12 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ipsMainDisconnect(AContext: TIdContext);
     procedure actProxyPortExecute(Sender: TObject);
+    procedure actVerbNormalUpdate(Sender: TObject);
+    procedure actVerbNormalExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FBitsPerSec: Integer;
+    FVerbosity: TVerbosity;
     procedure SetActive(const AActive: boolean);
     procedure AddLog(const AMsg: string);
     procedure ReadSettings;
@@ -96,6 +108,7 @@ begin
   with TInifile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
     FBitsPerSec := ReadInteger('proxy', 'bitspersec', 128000);
     ipsMain.DefaultPort := ReadInteger('proxy', 'port', 1080);
+    FVerbosity := TVerbosity(ReadInteger('log', 'verbose', Ord(vNormal)));
   finally
     Free;
   end;
@@ -106,6 +119,7 @@ begin
   with TInifile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
     WriteInteger('proxy', 'bitspersec', FBitsPerSec);
     WriteInteger('proxy', 'port', ipsMain.DefaultPort);
+    WriteInteger('log', 'verbose', Ord(FVerbosity));
   finally
     Free;
   end;
@@ -163,6 +177,16 @@ begin
   end;
 end;
 
+procedure TMainForm.actVerbNormalExecute(Sender: TObject);
+begin
+	FVerbosity := TVerbosity((Sender as TAction).Tag);
+end;
+
+procedure TMainForm.actVerbNormalUpdate(Sender: TObject);
+begin
+	(Sender as TAction).Checked := Ord(FVerbosity) = (Sender as TAction).Tag;
+end;
+
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 	SetActive(false);
@@ -173,6 +197,7 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
 	Caption := SAppTitle;
 	FBitsPerSec := 128000;
+  FVerbosity := vNormal;
   ReadSettings;
 	SetActive(true);
 end;
@@ -180,25 +205,29 @@ end;
 procedure TMainForm.idThrottleConnect(
   ASender: TIdConnectionIntercept);
 begin
-//	AddLog('Intercept Connect');
+	if FVerbosity >= vVerbose then
+		AddLog('Intercept Connect');
 end;
 
 procedure TMainForm.idThrottleDisconnect(
   ASender: TIdConnectionIntercept);
 begin
-//	AddLog('Intercept Disconnect');
+	if FVerbosity >= vVerbose then
+		AddLog('Intercept Disconnect');
 end;
 
 procedure TMainForm.idThrottleReceive(
   ASender: TIdConnectionIntercept; var ABuffer: TArray<System.Byte>);
 begin
-//	AddLog(Format('Receive: %d B', [Length(ABuffer)]));
+	if FVerbosity >= vVery then
+		AddLog(Format('Receive: %d B', [Length(ABuffer)]));
 end;
 
 procedure TMainForm.idThrottleSend(ASender: TIdConnectionIntercept;
   var ABuffer: TArray<System.Byte>);
 begin
-//	AddLog(Format('Send: %d B', [Length(ABuffer)]));
+	if FVerbosity >= vVery then
+		AddLog(Format('Send: %d B', [Length(ABuffer)]));
 end;
 
 procedure TMainForm.ipsMainBeforeSocksConnect(AContext: TIdSocksServerContext;
@@ -218,12 +247,14 @@ end;
 
 procedure TMainForm.ipsMainConnect(AContext: TIdContext);
 begin
-//	AddLog('Connect');
+	if FVerbosity >= vVerbose then
+		AddLog('Connect');
 end;
 
 procedure TMainForm.ipsMainDisconnect(AContext: TIdContext);
 begin
-//	AddLog('Disconnect');
+	if FVerbosity >= vVerbose then
+		AddLog('Disconnect');
 end;
 
 end.

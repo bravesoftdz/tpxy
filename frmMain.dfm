@@ -215,6 +215,24 @@ object MainForm: TMainForm
     end
     object Edit1: TMenuItem
       Caption = '&Edit'
+      object Verbosity1: TMenuItem
+        Caption = '&Verbosity'
+        object Normal1: TMenuItem
+          Action = actVerbNormal
+          GroupIndex = 1
+          RadioItem = True
+        end
+        object Verbose1: TMenuItem
+          Action = actVerbVerbose
+          GroupIndex = 1
+          RadioItem = True
+        end
+        object Veryverbose1: TMenuItem
+          Action = actVerbVery
+          GroupIndex = 1
+          RadioItem = True
+        end
+      end
       object Clear1: TMenuItem
         Action = actEditClear
       end
@@ -263,6 +281,29 @@ object MainForm: TMainForm
       Category = 'Proxy'
       Caption = 'Port...'
       OnExecute = actProxyPortExecute
+    end
+    object actVerbNormal: TAction
+      Category = 'Edit'
+      Caption = 'Normal'
+      GroupIndex = 1
+      OnExecute = actVerbNormalExecute
+      OnUpdate = actVerbNormalUpdate
+    end
+    object actVerbVerbose: TAction
+      Tag = 1
+      Category = 'Edit'
+      Caption = 'Verbose'
+      GroupIndex = 1
+      OnExecute = actVerbNormalExecute
+      OnUpdate = actVerbNormalUpdate
+    end
+    object actVerbVery: TAction
+      Tag = 2
+      Category = 'Edit'
+      Caption = 'Very verbose'
+      GroupIndex = 1
+      OnExecute = actVerbNormalExecute
+      OnUpdate = actVerbNormalUpdate
     end
   end
   object ipsMain: TIdSocksServer
