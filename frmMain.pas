@@ -50,6 +50,8 @@ type
     Veryverbose1: TMenuItem;
     sbMain: TStatusBar;
     tmrStatus: TTimer;
+    actLogResolveHost: TAction;
+    ResolveHost1: TMenuItem;
     procedure actFileExitExecute(Sender: TObject);
     procedure actProxyActiveUpdate(Sender: TObject);
     procedure actProxyActiveExecute(Sender: TObject);
@@ -71,6 +73,8 @@ type
     procedure actVerbNormalUpdate(Sender: TObject);
     procedure actVerbNormalExecute(Sender: TObject);
     procedure tmrStatusTimer(Sender: TObject);
+    procedure actLogResolveHostUpdate(Sender: TObject);
+    procedure actLogResolveHostExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FBitsPerSec: Integer;
@@ -78,6 +82,8 @@ type
     FRec, FSent: Cardinal;
     FStartTime: TDateTime;
     FStat: TStat;
+    FResolveHost: boolean;
+    function GetHostName(const AIP: string): string;
     procedure SetActive(const AActive: boolean);
     procedure AddLog(const AMsg: string);
     procedure ReadSettings;
@@ -96,7 +102,7 @@ var
 implementation
 
 uses
-	IdTCPConnection, IdTCPStream, IdGlobal, IniFiles, DateUtils;
+	IdTCPConnection, IdTCPStream, IdGlobal, IniFiles, DateUtils, Winapi.Winsock2;
 
 {$R *.dfm}
 
@@ -178,6 +184,7 @@ begin
     FBitsPerSec := ReadInteger('proxy', 'bitspersec', 128000);
     ipsMain.DefaultPort := ReadInteger('proxy', 'port', 1080);
     FVerbosity := TVerbosity(ReadInteger('log', 'verbose', Ord(vNormal)));
+    FResolveHost := ReadBool('log', 'resolvehost', false);
   finally
     Free;
   end;
@@ -189,6 +196,7 @@ begin
     WriteInteger('proxy', 'bitspersec', FBitsPerSec);
     WriteInteger('proxy', 'port', ipsMain.DefaultPort);
     WriteInteger('log', 'verbose', Ord(FVerbosity));
+    WriteBool('log', 'resolvehost', FResolveHost);
   finally
     Free;
   end;
@@ -202,6 +210,16 @@ end;
 procedure TMainForm.actFileExitExecute(Sender: TObject);
 begin
 	Close;
+end;
+
+procedure TMainForm.actLogResolveHostExecute(Sender: TObject);
+begin
+	FResolveHost := not FResolveHost;
+end;
+
+procedure TMainForm.actLogResolveHostUpdate(Sender: TObject);
+begin
+	(Sender as TAction).Checked := FResolveHost;
 end;
 
 procedure TMainForm.actProxyActiveExecute(Sender: TObject);
@@ -289,6 +307,7 @@ begin
 	Caption := SAppTitle;
 	FBitsPerSec := 128000;
   FVerbosity := vNormal;
+  FResolveHost := false;
   ReadSettings;
 	SetActive(true);
 end;
@@ -333,12 +352,34 @@ begin
 		AddLog(Format('Send: %d B', [s]));
 end;
 
+function TMainForm.GetHostName(const AIP: string): string;
+var
+  SockAddrIn: TSockAddrIn;
+  HostEnt: PHostEnt;
+  WSAData: TWSAData;
+  AnsiIP: AnsiString;
+begin
+  WSAStartup($101, WSAData);
+  AnsiIP := AnsiString(AIP);
+  SockAddrIn.sin_addr.s_addr := inet_addr(PAnsiChar(AnsiIP));
+  HostEnt := gethostbyaddr(@SockAddrIn.sin_addr.S_addr, 4, AF_INET);
+  if HostEnt <> nil then
+    Result := string(Hostent^.h_name)
+  else
+    Result := AIP;
+end;
+
 procedure TMainForm.ipsMainBeforeSocksConnect(AContext: TIdSocksServerContext;
   var VHost: string; var VPort: Word; var VAllowed: Boolean);
 var
 	Throttle: TIdInterceptThrottler;
+  HostStr: string;
 begin
-	AddLog(Format('SOCKS%d: %s:%d', [AContext.SocksVersion, VHost, VPort]));
+	if FResolveHost then
+		HostStr := GetHostName(VHost)
+  else
+  	HostStr := VHost;
+	AddLog(Format('SOCKS%d: %s:%d', [AContext.SocksVersion, HostStr, VPort]));
   Throttle := TIdInterceptThrottler.Create(AContext.Connection);
   Throttle.BitsPerSec := FBitsPerSec;
   Throttle.OnConnect := idThrottleConnect;

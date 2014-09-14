@@ -241,6 +241,9 @@ object MainForm: TMainForm
           RadioItem = True
         end
       end
+      object ResolveHost1: TMenuItem
+        Action = actLogResolveHost
+      end
       object Clear1: TMenuItem
         Action = actEditClear
       end
@@ -312,6 +315,12 @@ object MainForm: TMainForm
       GroupIndex = 1
       OnExecute = actVerbNormalExecute
       OnUpdate = actVerbNormalUpdate
+    end
+    object actLogResolveHost: TAction
+      Category = 'Edit'
+      Caption = 'Resolve Host'
+      OnExecute = actLogResolveHostExecute
+      OnUpdate = actLogResolveHostUpdate
     end
   end
   object ipsMain: TIdSocksServer
