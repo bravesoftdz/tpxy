@@ -27,6 +27,9 @@ type
     actEditClear: TAction;
     Clear1: TMenuItem;
     tiMain: TTrayIcon;
+    actProxyPort: TAction;
+    Port1: TMenuItem;
+    N1: TMenuItem;
     procedure actFileExitExecute(Sender: TObject);
     procedure actProxyActiveUpdate(Sender: TObject);
     procedure actProxyActiveExecute(Sender: TObject);
@@ -44,6 +47,7 @@ type
     procedure actEditClearExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ipsMainDisconnect(AContext: TIdContext);
+    procedure actProxyPortExecute(Sender: TObject);
   private
     { Private-Deklarationen }
     FBitsPerSec: Integer;
@@ -91,6 +95,7 @@ procedure TMainForm.ReadSettings;
 begin
   with TInifile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
     FBitsPerSec := ReadInteger('proxy', 'bitspersec', 128000);
+    ipsMain.DefaultPort := ReadInteger('proxy', 'port', 1080);
   finally
     Free;
   end;
@@ -100,6 +105,7 @@ procedure TMainForm.WriteSettings;
 begin
   with TInifile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
     WriteInteger('proxy', 'bitspersec', FBitsPerSec);
+    WriteInteger('proxy', 'port', ipsMain.DefaultPort);
   finally
     Free;
   end;
@@ -123,6 +129,22 @@ end;
 procedure TMainForm.actProxyActiveUpdate(Sender: TObject);
 begin
 	(Sender as TAction).Checked := ipsMain.Active;
+end;
+
+procedure TMainForm.actProxyPortExecute(Sender: TObject);
+var
+	val: string;
+  act: boolean;
+begin
+	val := IntToStr(ipsMain.DefaultPort);
+	if InputQuery('Port', 'Enter Port', val) then begin
+  	act := ipsMain.Active;
+    if act then
+			SetActive(false);
+		ipsMain.DefaultPort := StrToInt(val);
+    if act then
+			SetActive(true);
+  end;
 end;
 
 procedure TMainForm.actProxySpeedExecute(Sender: TObject);

@@ -27,4 +27,4 @@ Usage
 
 1. Run the executeable
 2. Enter the transfer speed: Proxy -> Max. Speed in Bits per second.
-2. Configure your client (e.g. µTox) to connect over SOCKS4 or SOCKS5.
+2. Configure your client (e.g. ÂµTox) to connect over SOCKS4 or SOCKS5.

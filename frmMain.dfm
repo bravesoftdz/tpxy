@@ -203,7 +203,6 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     TabOrder = 0
     WordWrap = False
-    ExplicitHeight = 300
   end
   object mnuMain: TMainMenu
     Left = 128
@@ -225,8 +224,14 @@ object MainForm: TMainForm
       object Active1: TMenuItem
         Action = actProxyActive
       end
+      object N1: TMenuItem
+        Caption = '-'
+      end
       object MaxSpeed1: TMenuItem
         Action = actProxySpeed
+      end
+      object Port1: TMenuItem
+        Action = actProxyPort
       end
     end
   end
@@ -253,6 +258,11 @@ object MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Clear'
       OnExecute = actEditClearExecute
+    end
+    object actProxyPort: TAction
+      Category = 'Proxy'
+      Caption = 'Port...'
+      OnExecute = actProxyPortExecute
     end
   end
   object ipsMain: TIdSocksServer
