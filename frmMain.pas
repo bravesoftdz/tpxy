@@ -367,6 +367,7 @@ begin
     Result := string(Hostent^.h_name)
   else
     Result := AIP;
+  WSACleanup;
 end;
 
 procedure TMainForm.ipsMainBeforeSocksConnect(AContext: TIdSocksServerContext;
