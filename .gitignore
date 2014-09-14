@@ -1,0 +1,17 @@
+*.dcu
+*.~*~
+*.local
+*.identcache
+__history
+*.drc
+*.map
+*.exe
+*.dll
+bin/*
+*.o
+*.obj
+*.ppu
+*.bak
+*.compiled
+Win32
+Win64
