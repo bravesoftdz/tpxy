@@ -274,11 +274,8 @@ begin
   if td > 0 then begin
     sps := Trunc(FSent / td) * 8;
     spr := Trunc(FRec / td) * 8;
-  end else begin
-    sps := 0;
-    spr := 0;
+	  AddStat(sps, spr);
   end;
-  AddStat(sps, spr);
   AvgStat(st);
   if (td > 10) then
   	ResetStat;
@@ -383,13 +380,15 @@ begin
   else
   	HostStr := VHost;
 	AddLog(Format('SOCKS%d: %s:%d', [AContext.SocksVersion, HostStr, VPort]));
-  Throttle := TIdInterceptThrottler.Create(AContext.Connection);
-  Throttle.BitsPerSec := FBitsPerSec;
-  Throttle.OnConnect := idThrottleConnect;
-  Throttle.OnDisconnect := idThrottleDisconnect;
-  Throttle.OnReceive := idThrottleReceive;
-  Throttle.OnSend := idThrottleSend;
-  AContext.Connection.Intercept := Throttle;
+  if FBitsPerSec > 0 then begin
+    Throttle := TIdInterceptThrottler.Create(AContext.Connection);
+    Throttle.BitsPerSec := FBitsPerSec;
+    Throttle.OnConnect := idThrottleConnect;
+    Throttle.OnDisconnect := idThrottleDisconnect;
+    Throttle.OnReceive := idThrottleReceive;
+    Throttle.OnSend := idThrottleSend;
+    AContext.Connection.Intercept := Throttle;
+  end;
 end;
 
 procedure TMainForm.ipsMainConnect(AContext: TIdContext);
