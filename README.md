@@ -16,3 +16,10 @@ Compiling
 This is a very simple program, I just put some Indy Components on a form.
 
 Open tpxygui.dproj in Delphi XE3 or higher and click the compile button.
+
+Usage
+-----
+
+1. Run the executeable
+2. Enter the transfer speed: Proxy -> Max. Speed in Bits per second.
+2. Configure your client (e.g. µTox) to connect over SOCKS4 or SOCKS5.
