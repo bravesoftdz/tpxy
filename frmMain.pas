@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, IdContext, System.Actions, Vcl.ActnList,
   Vcl.Menus, Vcl.StdCtrls, IdBaseComponent, IdComponent, IdCustomTCPServer,
   IdTCPServer, IdCmdTCPServer, IdHTTPProxyServer, IdSocksServer, IdIOHandler,
-  IdIOHandlerStream, IdIntercept, IdInterceptThrottler, Vcl.ExtCtrls;
+  IdIOHandlerStream, IdIntercept, IdInterceptThrottler, Vcl.ExtCtrls,
+  Vcl.ComCtrls;
 
 type
 	TVerbosity = (vNormal, vVerbose, vVery);
@@ -39,6 +40,8 @@ type
     Normal1: TMenuItem;
     Verbose1: TMenuItem;
     Veryverbose1: TMenuItem;
+    sbMain: TStatusBar;
+    tmrStatus: TTimer;
     procedure actFileExitExecute(Sender: TObject);
     procedure actProxyActiveUpdate(Sender: TObject);
     procedure actProxyActiveExecute(Sender: TObject);
@@ -59,14 +62,19 @@ type
     procedure actProxyPortExecute(Sender: TObject);
     procedure actVerbNormalUpdate(Sender: TObject);
     procedure actVerbNormalExecute(Sender: TObject);
+    procedure tmrStatusTimer(Sender: TObject);
   private
     { Private-Deklarationen }
     FBitsPerSec: Integer;
     FVerbosity: TVerbosity;
+    FRec, FSent: Cardinal;
+    FStartTime: TDateTime;
     procedure SetActive(const AActive: boolean);
     procedure AddLog(const AMsg: string);
     procedure ReadSettings;
     procedure WriteSettings;
+    procedure UpdateStatusbar;
+    procedure ResetStat;
   public
     { Public-Deklarationen }
   end;
@@ -77,25 +85,39 @@ var
 implementation
 
 uses
-	IdTCPConnection, IdTCPStream, IdGlobal, IniFiles;
+	IdTCPConnection, IdTCPStream, IdGlobal, IniFiles, DateUtils;
 
 {$R *.dfm}
 
 resourcestring
 	SAppTitle = 'Throttle Proxy';
 
+procedure TMainForm.ResetStat;
+begin
+  FRec := 0;
+  FSent := 0;
+  FStartTime := Now;
+end;
+
 procedure TMainForm.SetActive(const AActive: boolean);
 const
 	ACT: array[boolean] of string = ('Inactive', 'Active');
 begin
   if ipsMain.Active <> AActive then begin
+  	ResetStat;
   	ipsMain.Active := AActive;
+    tmrStatus.Enabled := AActive;
   	Caption := Format('%s [%s]', [SAppTitle, ACT[ipsMain.Active]]);
     if AActive then
     	AddLog(Format('Startup Port %d, %d Bit/s', [ipsMain.DefaultPort, FBitsPerSec]))
     else
     	Addlog('Shutdown');
   end;
+end;
+
+procedure TMainForm.tmrStatusTimer(Sender: TObject);
+begin
+	UpdateStatusbar;
 end;
 
 procedure TMainForm.AddLog(const AMsg: string);
@@ -177,6 +199,23 @@ begin
   end;
 end;
 
+procedure TMainForm.UpdateStatusbar;
+var
+	td: integer;
+  sps, spr: integer;
+begin
+  td := SecondsBetween(Now, FStartTime);
+  if td > 0 then begin
+    sps := Trunc(FSent / td);
+    spr := Trunc(FRec / td);
+  end else begin
+    sps := 0;
+    spr := 0;
+  end;
+
+  sbMain.SimpleText := Format('Sent: %d B/s; Rec: %d B/s', [sps, spr]);
+end;
+
 procedure TMainForm.actVerbNormalExecute(Sender: TObject);
 begin
 	FVerbosity := TVerbosity((Sender as TAction).Tag);
@@ -218,16 +257,28 @@ end;
 
 procedure TMainForm.idThrottleReceive(
   ASender: TIdConnectionIntercept; var ABuffer: TArray<System.Byte>);
+var
+	s: integer;
 begin
+	s := Length(ABuffer);
+  if FRec > Cardinal(MaxInt) then
+  	ResetStat;
+  Inc(FRec, s);
 	if FVerbosity >= vVery then
-		AddLog(Format('Receive: %d B', [Length(ABuffer)]));
+		AddLog(Format('Receive: %d B', [s]));
 end;
 
 procedure TMainForm.idThrottleSend(ASender: TIdConnectionIntercept;
   var ABuffer: TArray<System.Byte>);
+var
+	s: integer;
 begin
+	s := Length(ABuffer);
+  if FSent > Cardinal(MaxInt) then
+  	ResetStat;
+  Inc(FSent, s);
 	if FVerbosity >= vVery then
-		AddLog(Format('Send: %d B', [Length(ABuffer)]));
+		AddLog(Format('Send: %d B', [s]));
 end;
 
 procedure TMainForm.ipsMainBeforeSocksConnect(AContext: TIdSocksServerContext;

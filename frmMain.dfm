@@ -191,7 +191,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 635
-    Height = 218
+    Height = 199
     Align = alClient
     Font.Charset = ANSI_CHARSET
     Font.Color = clWindowText
@@ -203,6 +203,18 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     TabOrder = 0
     WordWrap = False
+    ExplicitHeight = 218
+  end
+  object sbMain: TStatusBar
+    Left = 0
+    Top = 199
+    Width = 635
+    Height = 19
+    Panels = <>
+    SimplePanel = True
+    ExplicitLeft = 432
+    ExplicitTop = 208
+    ExplicitWidth = 0
   end
   object mnuMain: TMainMenu
     Left = 128
@@ -214,7 +226,7 @@ object MainForm: TMainForm
       end
     end
     object Edit1: TMenuItem
-      Caption = '&Edit'
+      Caption = '&Log'
       object Verbosity1: TMenuItem
         Caption = '&Verbosity'
         object Normal1: TMenuItem
@@ -491,5 +503,11 @@ object MainForm: TMainForm
       AC41FBBFAC41F01FAC41E28FAC41C6C7AC41FEFFAC41}
     Left = 168
     Top = 8
+  end
+  object tmrStatus: TTimer
+    Enabled = False
+    OnTimer = tmrStatusTimer
+    Left = 288
+    Top = 24
   end
 end
