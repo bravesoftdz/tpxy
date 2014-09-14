@@ -368,6 +368,8 @@ begin
   else
     Result := AIP;
   WSACleanup;
+  if Result = '' then
+  	Result := AIP;
 end;
 
 procedure TMainForm.ipsMainBeforeSocksConnect(AContext: TIdSocksServerContext;
