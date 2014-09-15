@@ -37,10 +37,24 @@ Open tpxygui.dproj in Delphi XE3 or higher and click the compile button.
 Usage
 -----
 
-1. Run the executeable
-2. Enter the transfer speed: Proxy -> Max. Speed in Bits per second.
-2. Configure your client (e.g. µTox) to connect over SOCKS4 or SOCKS5.
+There are two versions of this program
 
+1. tpxygui (GUI version)
+
+  1. Run the executeable
+  2. Enter the transfer speed: Proxy -> Max. Speed in Bits per second.
+  2. Configure your client (e.g. µTox) to connect over SOCKS4 or SOCKS5.
+
+2. tpxyc (Console version)
+
+  `tpxyc [-<options>]`
+  
+  `B<integer>`  Max Bits/s per connection
+  `P<integer>` Bind to port
+  `H<true|false>` Resolve host names (slower)
+  `V<0..3>` Verbosity
+  `s<true|false>` Save settings  
+  
 Binaries
 --------
 
