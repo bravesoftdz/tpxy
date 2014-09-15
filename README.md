@@ -49,11 +49,11 @@ There are two versions of this program
 
   `tpxyc [-<options>]`
   
-  `B<integer>`  Max Bits/s per connection
-  `P<integer>` Bind to port
-  `H<true|false>` Resolve host names (slower)
-  `V<0..3>` Verbosity
-  `s<true|false>` Save settings  
+    `B<integer>`  Max Bits/s per connection
+    `P<integer>` Bind to port
+    `H<true|false>` Resolve host names (slower)
+    `V<0..3>` Verbosity
+    `s<true|false>` Save settings  
   
 Binaries
 --------
