@@ -225,6 +225,9 @@ object MainForm: TMainForm
       Caption = '&Log'
       object Verbosity1: TMenuItem
         Caption = '&Verbosity'
+        object None1: TMenuItem
+          Action = actVerbNone
+        end
         object Normal1: TMenuItem
           Action = actVerbNormal
           GroupIndex = 1
@@ -243,6 +246,9 @@ object MainForm: TMainForm
       end
       object ResolveHost1: TMenuItem
         Action = actLogResolveHost
+      end
+      object N2: TMenuItem
+        Caption = '-'
       end
       object Clear1: TMenuItem
         Action = actEditClear
@@ -293,7 +299,14 @@ object MainForm: TMainForm
       Caption = 'Port...'
       OnExecute = actProxyPortExecute
     end
+    object actVerbNone: TAction
+      Category = 'Edit'
+      Caption = 'None'
+      OnExecute = actVerbNormalExecute
+      OnUpdate = actVerbNormalUpdate
+    end
     object actVerbNormal: TAction
+      Tag = 1
       Category = 'Edit'
       Caption = 'Normal'
       GroupIndex = 1
@@ -301,7 +314,7 @@ object MainForm: TMainForm
       OnUpdate = actVerbNormalUpdate
     end
     object actVerbVerbose: TAction
-      Tag = 1
+      Tag = 2
       Category = 'Edit'
       Caption = 'Verbose'
       GroupIndex = 1
@@ -309,7 +322,7 @@ object MainForm: TMainForm
       OnUpdate = actVerbNormalUpdate
     end
     object actVerbVery: TAction
-      Tag = 2
+      Tag = 3
       Category = 'Edit'
       Caption = 'Very verbose'
       GroupIndex = 1
@@ -322,17 +335,6 @@ object MainForm: TMainForm
       OnExecute = actLogResolveHostExecute
       OnUpdate = actLogResolveHostUpdate
     end
-  end
-  object ipsMain: TIdSocksServer
-    Bindings = <>
-    OnConnect = ipsMainConnect
-    OnDisconnect = ipsMainDisconnect
-    AllowSocks4 = True
-    AllowSocks5 = True
-    NeedsAuthentication = False
-    OnBeforeSocksConnect = ipsMainBeforeSocksConnect
-    Left = 32
-    Top = 8
   end
   object tiMain: TTrayIcon
     Icon.Data = {

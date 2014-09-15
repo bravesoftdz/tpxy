@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{6C7AFE4D-EA1E-47C3-ACEF-26DC858B4F12}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="tpxygui.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="tpxyc.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="tpxygui">
+        <MSBuild Projects="tpxygui.dproj"/>
+    </Target>
+    <Target Name="tpxygui:Clean">
+        <MSBuild Projects="tpxygui.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="tpxygui:Make">
+        <MSBuild Projects="tpxygui.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="tpxyc">
+        <MSBuild Projects="tpxyc.dproj"/>
+    </Target>
+    <Target Name="tpxyc:Clean">
+        <MSBuild Projects="tpxyc.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="tpxyc:Make">
+        <MSBuild Projects="tpxyc.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="tpxygui;tpxyc"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="tpxygui:Clean;tpxyc:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="tpxygui:Make;tpxyc:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
