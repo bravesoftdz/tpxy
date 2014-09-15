@@ -171,7 +171,7 @@ var
   act: boolean;
 begin
 	val := IntToStr(FServer.BitsPerSec);
-	if InputQuery('Max sspeed', 'Max speed in Bits/s. per connection.'#13#10'0 = unlimited.', val) then begin
+	if InputQuery('Max speed', 'Max speed in Bits/s. per connection.'#13#10'0 = unlimited.', val) then begin
   	act := FServer.Active;
     if act then
 			SetActive(false);
@@ -188,7 +188,7 @@ begin
 	FServer.UpdateStat;
   FServer.AvgStat(st);
 
-  sbMain.SimpleText := Format('Sent: %d Bits/s; Rec: %d Bits/s; Total: %d Bits/s', [st.Sent, st.Rec, st.Sent + st.Rec]);
+  sbMain.SimpleText := Format('Send: %d Bits/s; Rec: %d Bits/s; Total: %d Bits/s', [st.Sent, st.Rec, st.Sent + st.Rec]);
 end;
 
 procedure TMainForm.actVerbNormalExecute(Sender: TObject);

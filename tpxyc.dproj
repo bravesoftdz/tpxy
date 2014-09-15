@@ -39,6 +39,12 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
@@ -86,6 +92,9 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
+        <Debugger_RunParams>-Htrue -P1081</Debugger_RunParams>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <VerInfo_Locale>3079</VerInfo_Locale>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
@@ -107,6 +116,7 @@
         <DCCReference Include="uLog.pas"/>
         <DCCReference Include="uThrottleProxy.pas"/>
         <DCCReference Include="uConsoleLog.pas"/>
+        <DCCReference Include="uOpt.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
