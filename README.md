@@ -32,12 +32,13 @@ Compiling
 
 This is a very simple program, I just put some Indy Components on a form.
 
-Open tpxygui.dproj in Delphi XE3 or higher and click the compile button.
+Open `tpxy.groupproj` in Delphi XE3, select the project you want to compile and
+click the compile button.
 
 Usage
 -----
 
-There are two versions of this program
+There are three versions of this program
 
 1. tpxygui (GUI version)
 
@@ -55,6 +56,15 @@ There are two versions of this program
     V<0..3> Verbosity
     s<true|false> Save settings  
   
+3. tpxysvc (Service version)
+
+Run `installsvc.bat` to install the service. It should start automatically
+at system boot.
+
+Edit `tpxysvc.ini` to configure it.
+
+Run `uninstallsvc.bat` to uninstall the service.
+
 Binaries
 --------
 

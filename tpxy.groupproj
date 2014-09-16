@@ -9,6 +9,9 @@
         <Projects Include="tpxyc.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="tpxysvc.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
     <Target Name="tpxyc:Make">
         <MSBuild Projects="tpxyc.dproj" Targets="Make"/>
     </Target>
+    <Target Name="tpxysvc">
+        <MSBuild Projects="tpxysvc.dproj"/>
+    </Target>
+    <Target Name="tpxysvc:Clean">
+        <MSBuild Projects="tpxysvc.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="tpxysvc:Make">
+        <MSBuild Projects="tpxysvc.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="tpxygui;tpxyc"/>
+        <CallTarget Targets="tpxygui;tpxyc;tpxysvc"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="tpxygui:Clean;tpxyc:Clean"/>
+        <CallTarget Targets="tpxygui:Clean;tpxyc:Clean;tpxysvc:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="tpxygui:Make;tpxyc:Make"/>
+        <CallTarget Targets="tpxygui:Make;tpxyc:Make;tpxysvc:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

@@ -48,7 +48,7 @@ end;
 procedure ShowHelp;
 begin
   WriteLn('Usage');
-  WriteLn(ExtractFileName(ParamStr(0)) + ' [-options]');
+  WriteLn(' ' + ExtractFileName(ParamStr(0)) + ' [-<options>]');
   WriteLn('options:');
   WriteLn(' B<integer>     Limit to Bits per sec.');
   WriteLn(' P<integer>     Bind to port');
