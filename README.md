@@ -58,12 +58,12 @@ There are three versions of this program
   
 3. tpxysvc (Service version)
 
-Run `installsvc.bat` to install the service. It should start automatically
-at system boot.
+Run `installsvc.bat` as Administrator to install the service. It should start 
+automatically at system boot.
 
 Edit `tpxysvc.ini` to configure it.
 
-Run `uninstallsvc.bat` to uninstall the service.
+Run `uninstallsvc.bat` as Administrator to uninstall the service.
 
 Binaries
 --------
