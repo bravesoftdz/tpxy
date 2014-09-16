@@ -28,7 +28,7 @@ var
 implementation
 
 uses
-	IniFiles;
+	IniFiles, uLog, uDebugLog;
 
 {$R *.DFM}
 
@@ -49,12 +49,19 @@ begin
 end;
 
 procedure TThrottleProxyService.ServiceCreate(Sender: TObject);
+var
+	v: TVerbosity;
 begin
   FServer := TThrottleProxy.Create(Self);
   with TInifile.Create(ChangeFileExt(ParamStr(0), '.ini')) do try
     FServer.BitsPerSec := ReadInteger('proxy', 'bitspersec', 128000);
     FServer.Port := ReadInteger('proxy', 'port', 1080);
     FServer.ResolveHost := ReadBool('log', 'resolvehost', false);
+    v := TVerbosity(ReadInteger('log', 'verbose', Ord(vNormal)));
+    if v > vNone then begin
+      FServer.Log := TDebugLog.Create(FServer);
+      FServer.Log.Verb := v;
+    end;
   finally
     Free;
   end;

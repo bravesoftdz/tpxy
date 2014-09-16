@@ -3,7 +3,8 @@ program tpxysvc;
 uses
   Vcl.SvcMgr,
   svcMain in 'svcMain.pas' {ThrottleProxyService: TService},
-  uThrottleProxy in 'uThrottleProxy.pas';
+  uThrottleProxy in 'uThrottleProxy.pas',
+  uDebugLog in 'uDebugLog.pas';
 
 {$R *.RES}
 
