@@ -18,3 +18,5 @@ Win64
 *.vlb
 *.tvsconfig
 *.zip
+bpl
+dist

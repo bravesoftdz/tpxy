@@ -68,5 +68,4 @@ Run `uninstallsvc.bat` as Administrator to uninstall the service.
 Binaries
 --------
 
-I could provide some binaries, but I have no web space. Github doesn't let me 
-attach a binary to a releasse, don't know why.
+See https://github.com/stievie/tpxy/releases
