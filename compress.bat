@@ -12,11 +12,9 @@ copy LICENSE Win64\Release
 if exist tpxy-win32.zip del tpxy-win32.zip
 cd Win32\Release
 "%PROGRAMFILES%\7-Zip\7z.exe" a -tzip ..\..\tpxy-win32.zip *.exe *.bat *svc.ini README.md LICENSE
-"%PROGRAMFILES%\7-Zip\7z.exe" a -sfx7z.sfx ..\..\tpxy-win32.exe *.exe *.bat *svc.ini README.md LICENSE
 cd ..\..
 
 if exist tpxy-win64.zip del tpxy-win64.zip
 cd Win64\Release
 "%PROGRAMFILES%\7-Zip\7z.exe" a -tzip ..\..\tpxy-win64.zip *.exe *.bat *svc.ini README.md LICENSE
-"%PROGRAMFILES%\7-Zip\7z.exe" a -sfx7z.sfx ..\..\tpxy-win64.exe *.exe *.bat *svc.ini README.md LICENSE
 cd ..\..
