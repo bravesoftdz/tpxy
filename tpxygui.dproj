@@ -99,9 +99,9 @@
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_MinorVer>3</VerInfo_MinorVer>
         <VerInfo_MajorVer>0</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=Throttle Proxy;FileVersion=0.1.0.0;InternalName=tpxygui;LegalCopyright=Copyright (C) 2014;LegalTrademarks=;OriginalFilename=tpxygui.exe;ProductName=tpxy;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Throttle Proxy;FileVersion=0.3.0.0;InternalName=tpxygui;LegalCopyright=Copyright (C) 2014;LegalTrademarks=;OriginalFilename=tpxygui.exe;ProductName=tpxy;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>

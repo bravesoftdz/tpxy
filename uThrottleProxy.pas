@@ -39,6 +39,7 @@ type
       var VHost: string; var VPort: Word; var VAllowed: Boolean);
     procedure Server_Connect(AContext: TIdContext);
     procedure Server_Disconnect(AContext: TIdContext);
+    procedure Server_SocksDisconnected(Sender: TObject);
 
     procedure Throttle_Connect(ASender: TIdConnectionIntercept);
     procedure Throttle_Disconnect(ASender: TIdConnectionIntercept);
@@ -65,7 +66,7 @@ type
 implementation
 
 uses
-	DateUtils, Winapi.Winsock2;
+	DateUtils, Winapi.Winsock2, IdTCPConnection;
 
 { TThrottleProxy }
 
@@ -201,12 +202,21 @@ procedure TThrottleProxy.Server_BeforeSocksConnect(AContext: TIdSocksServerConte
 var
 	Throttle: TIdInterceptThrottler;
   HostStr: string;
+  LocalHostStr: string;
+  LocalPort: Word;
 begin
-	if FResolveHost then
-		HostStr := GetHostName(VHost)
-  else
+  LocalHostStr := AContext.Binding.PeerIP;
+  LocalPort := AContext.Binding.PeerPort;
+	if FResolveHost then begin
+		HostStr := GetHostName(VHost);
+	  LocalHostStr := GetHostName(LocalHostStr);
+  end else begin
   	HostStr := VHost;
-	AddLog(vNormal, Format('SOCKS %d: %s:%d', [AContext.SocksVersion, HostStr, VPort]));
+  end;
+	AddLog(vNormal, Format('SOCKS %d connect: %s:%d -> %s:%d', [AContext.SocksVersion,
+  	LocalHostStr, LocalPort,
+  	HostStr, VPort]));
+  AContext.Connection.OnDisconnected := Server_SocksDisconnected;
   if FBitsPerSec > 0 then begin
     Throttle := TIdInterceptThrottler.Create(AContext.Connection);
     Throttle.BitsPerSec := FBitsPerSec;
@@ -216,6 +226,23 @@ begin
     Throttle.OnSend := Throttle_Send;
     AContext.Connection.Intercept := Throttle;
   end;
+end;
+
+procedure TThrottleProxy.Server_SocksDisconnected(Sender: TObject);
+var
+	peer_ip: string;
+  peer_port: Word;
+  HostStr: string;
+begin
+	with TIdTCPConnection(Sender).Socket.Binding do begin
+		peer_ip := PeerIP;
+    peer_port := PeerPort;
+  end;
+	if FResolveHost then
+		HostStr := GetHostName(peer_ip)
+  else
+  	HostStr := peer_ip;
+	AddLog(vNormal, Format('SOCKS disconnected: %s:%d', [HostStr, peer_port]));
 end;
 
 procedure TThrottleProxy.Server_Connect(AContext: TIdContext);
