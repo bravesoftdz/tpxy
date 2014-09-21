@@ -24,7 +24,6 @@ type
     Edit1: TMenuItem;
     actEditClear: TAction;
     Clear1: TMenuItem;
-    tiMain: TTrayIcon;
     actProxyPort: TAction;
     Port1: TMenuItem;
     N1: TMenuItem;
@@ -62,6 +61,7 @@ type
     procedure ReadSettings;
     procedure WriteSettings;
     procedure UpdateStatusbar;
+    procedure ReadRules;
   public
     { Public-Deklarationen }
   end;
@@ -96,25 +96,34 @@ begin
 end;
 
 procedure TMainForm.ReadSettings;
-var
-	secs: TStringList;
-  i: integer;
-  recv, send: integer;
 begin
   with TInifile.Create(ChangeFileExt(Application.ExeName, '.ini')) do try
     FServer.BitsPerSec := ReadInteger('proxy', 'bitspersec', 128000);
     FServer.Port := ReadInteger('proxy', 'port', 1080);
     FServer.Log.Verb := TVerbosity(ReadInteger('log', 'verbose', Ord(vNormal)));
     FServer.ResolveHost := ReadBool('log', 'resolvehost', false);
+  finally
+    Free;
+  end;
+  ReadRules;
+end;
+
+procedure TMainForm.ReadRules;
+var
+	secs: TStringList;
+  i: integer;
+  recv, send: integer;
+  fn: string;
+begin
+	fn := IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName)) + 'rules.ini';
+  with TInifile.Create(fn) do try
     secs := TStringList.Create;
     try
 	    ReadSections(secs);
       for i := 0 to secs.Count - 1 do begin
-        if not SameText(secs[i], 'proxy') and not SameText(secs[i], 'log') then begin
-          recv := ReadInteger(secs[i], 'recv', 0);
-          send := ReadInteger(secs[i], 'send', 0);
-          FServer.Rules.AddRule(secs[i], recv, send);
-        end;
+        recv := ReadInteger(secs[i], 'recv', 0);
+        send := ReadInteger(secs[i], 'send', 0);
+        FServer.Rules.AddRule(secs[i], recv, send);
       end;
     finally
       secs.Free;

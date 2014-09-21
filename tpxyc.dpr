@@ -8,6 +8,7 @@ uses
   System.SysUtils,
   Winapi.Windows,
   IniFiles,
+  Classes,
   uLog in 'uLog.pas',
   uThrottleProxy in 'uThrottleProxy.pas',
   uConsoleLog in 'uConsoleLog.pas',
@@ -58,6 +59,31 @@ begin
   WriteLn(' s<true|false>  Save settings, default True');
 end;
 
+procedure ReadRules(AServer: TThrottleProxy);
+var
+	secs: TStringList;
+  i: integer;
+  recv, send: integer;
+  fn: string;
+begin
+	fn := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'rules.ini';
+  with TInifile.Create(fn) do try
+    secs := TStringList.Create;
+    try
+	    ReadSections(secs);
+      for i := 0 to secs.Count - 1 do begin
+        recv := ReadInteger(secs[i], 'recv', 0);
+        send := ReadInteger(secs[i], 'send', 0);
+        AServer.Rules.AddRule(secs[i], recv, send);
+      end;
+    finally
+      secs.Free;
+    end;
+  finally
+    Free;
+  end;
+end;
+
 var
 	gServer: TThrottleProxy;
   c: AnsiChar;
@@ -92,6 +118,7 @@ begin
         gServer.Log.Verb := TVerbosity(GetOpt('V', Ord(gServer.Log.Verb)));
         save_sett := GetOpt('s', save_sett);
       end;
+      ReadRules(gServer);
 
       WriteLn('Press `q` to quit');
 		  WriteLn;

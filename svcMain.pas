@@ -17,6 +17,7 @@ type
   private
     { Private-Deklarationen }
     FServer: TThrottleProxy;
+		procedure ReadRules;
   public
     function GetServiceController: TServiceController; override;
     { Public-Deklarationen }
@@ -61,6 +62,32 @@ begin
     if v > vNone then begin
       FServer.Log := TDebugLog.Create(FServer);
       FServer.Log.Verb := v;
+    end;
+  finally
+    Free;
+  end;
+  ReadRules;
+end;
+
+procedure TThrottleProxyService.ReadRules;
+var
+	secs: TStringList;
+  i: integer;
+  recv, send: integer;
+  fn: string;
+begin
+	fn := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0))) + 'rules.ini';
+  with TInifile.Create(fn) do try
+    secs := TStringList.Create;
+    try
+	    ReadSections(secs);
+      for i := 0 to secs.Count - 1 do begin
+        recv := ReadInteger(secs[i], 'recv', 0);
+        send := ReadInteger(secs[i], 'send', 0);
+        FServer.Rules.AddRule(secs[i], recv, send);
+      end;
+    finally
+      secs.Free;
     end;
   finally
     Free;

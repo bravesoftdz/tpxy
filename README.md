@@ -70,15 +70,14 @@ Special limit values
 
 The values are in Bits/s, but there are also some special values:
 
-  ` 0`: Disables, don't throttle the connection.
+  ` 0`: Disabled, don't throttle the connection.
   `-1`: Block the connection.
 
 Rules
 -----
 
-The Bits/s option is just a default value. You can fine tune the limit for each
-connection with the respective `*.ini` file: `tpxygui.ini`, `tpxyc.ini`, 
-`tpxysvc.ini`.
+The Bits/s option is just a default value. You can fine tune the limit for each 
+connection with the `rules.ini` file.
 
 To do so add a section with the pattern host:port, e.g.
 
