@@ -6,7 +6,7 @@ uses
 	Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
 	IdBaseComponent, IdComponent, IdCustomTCPServer, IdContext,
   IdTCPServer, IdCmdTCPServer, IdHTTPProxyServer, IdSocksServer, IdIOHandler,
-  IdIOHandlerStream, IdIntercept, IdInterceptThrottler, uLog;
+  IdIOHandlerStream, IdIntercept, IdInterceptThrottler, uLog, uThrottleRule;
 
 const
 	STAT_COUNT = 10;
@@ -29,6 +29,7 @@ type
     FPort: Word;
     FLog: TLog;
     FResolveHost: boolean;
+    FRules: TThrottelRulesCollection;
     function GetActive: boolean;
     procedure SetActive(Value: boolean);
     procedure ResetStat;
@@ -61,6 +62,7 @@ type
     property Port: Word read FPort write FPort default 1080;
     property ResolveHost: boolean read FResolveHost write FResolveHost default false;
     property Log: TLog read FLog write FLog;
+    property Rules: TThrottelRulesCollection read FRules write FRules;
   end;
 
 implementation
@@ -73,6 +75,7 @@ uses
 constructor TThrottleProxy.Create(Owner: TComponent);
 begin
 	inherited;
+  FRules := TThrottelRulesCollection.Create(Self, TThrottleRule);
   FServer := nil;
   FPort := 1080;
   FBitsPerSec := 0;
@@ -204,6 +207,8 @@ var
   HostStr: string;
   LocalHostStr: string;
   LocalPort: Word;
+  Rule: TThrottleRule;
+  Send, Recv: Integer;
 begin
   LocalHostStr := AContext.Binding.PeerIP;
   LocalPort := AContext.Binding.PeerPort;
@@ -213,13 +218,29 @@ begin
   end else begin
   	HostStr := VHost;
   end;
-	AddLog(vNormal, Format('SOCKS %d connect: %s:%d -> %s:%d', [AContext.SocksVersion,
-  	LocalHostStr, LocalPort,
-  	HostStr, VPort]));
   AContext.Connection.OnDisconnected := Server_SocksDisconnected;
-  if FBitsPerSec > 0 then begin
+  Rule := FRules.Find(VHost, VPort);
+  if not Assigned(Rule) and (VHost <> HostStr) then
+	  Rule := FRules.Find(HostStr, VPort);
+
+  if Assigned(Rule) then begin
+		Send := Rule.Send;
+    Recv := Rule.Recv;
+  end else begin
+    Send := FBitsPerSec;
+    Recv := FBitsPerSec;
+  end;
+	AddLog(vNormal, Format('SOCKS %d connect: %s:%d -> %s:%d; Send %d, Recv %d', [AContext.SocksVersion,
+  	LocalHostStr, LocalPort,
+  	HostStr, VPort,
+    Send, Recv]));
+
+  if (Send < 0) or (Recv < 0) then begin
+  	VAllowed := false;
+  end else if (Send > 0) or (Recv > 0) then begin
     Throttle := TIdInterceptThrottler.Create(AContext.Connection);
-    Throttle.BitsPerSec := FBitsPerSec;
+    Throttle.RecvBitsPerSec := Recv;
+    Throttle.SendBitsPerSec := Send;
     Throttle.OnConnect := Throttle_Connect;
     Throttle.OnDisconnect := Throttle_Disconnect;
     Throttle.OnReceive := Throttle_Receive;

@@ -5,7 +5,8 @@ uses
   frmMain in 'frmMain.pas' {MainForm},
   uThrottleProxy in 'uThrottleProxy.pas',
   uLog in 'uLog.pas',
-  uMemoLog in 'uMemoLog.pas';
+  uMemoLog in 'uMemoLog.pas',
+  uThrottleRule in 'uThrottleRule.pas';
 
 {$R *.res}
 

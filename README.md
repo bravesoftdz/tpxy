@@ -65,6 +65,39 @@ Edit `tpxysvc.ini` to configure it.
 
 Run `uninstallsvc.bat` as Administrator to uninstall the service.
 
+Special limit values
+--------------------
+
+The values are in Bits/s, but there are also some special values:
+
+  ` 0`: Disables, don't throttle the connection.
+  `-1`: Block the connection.
+
+Rules
+-----
+
+The Bits/s option is just a default value. You can fine tune the limit for each
+connection with the respective `*.ini` file: `tpxygui.ini`, `tpxyc.ini`, 
+`tpxysvc.ini`.
+
+To do so add a section with the pattern host:port, e.g.
+
+    [*:*]
+    recv=128000
+    send=128000
+    
+would limit all connections (send and receive) to 128 KBits/s.
+
+    [*google.com:*]
+    recv=128000
+    send=128000
+
+This rule would limit all connection to Google.com with all subdomain at any port 
+to 128 KBits/s.
+
+To match also domain names not only IP addresses, the option `resolvehost` must
+be turned on.
+
 Binaries
 --------
 
