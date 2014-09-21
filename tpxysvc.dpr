@@ -4,7 +4,8 @@ uses
   Vcl.SvcMgr,
   svcMain in 'svcMain.pas' {ThrottleProxyService: TService},
   uThrottleProxy in 'uThrottleProxy.pas',
-  uDebugLog in 'uDebugLog.pas';
+  uDebugLog in 'uDebugLog.pas',
+  uThrottleRule in 'uThrottleRule.pas';
 
 {$R *.RES}
 

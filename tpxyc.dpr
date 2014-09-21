@@ -11,7 +11,8 @@ uses
   uLog in 'uLog.pas',
   uThrottleProxy in 'uThrottleProxy.pas',
   uConsoleLog in 'uConsoleLog.pas',
-  uOpt in 'uOpt.pas';
+  uOpt in 'uOpt.pas',
+  uThrottleRule in 'uThrottleRule.pas';
 
 function KeyPressed: AnsiChar;
 var

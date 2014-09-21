@@ -112,6 +112,7 @@
         </DCCReference>
         <DCCReference Include="uThrottleProxy.pas"/>
         <DCCReference Include="uDebugLog.pas"/>
+        <DCCReference Include="uThrottleRule.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
